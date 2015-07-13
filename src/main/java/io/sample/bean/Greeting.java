@@ -1,4 +1,4 @@
-package hello;
+package io.sample.bean;
 
 public class Greeting {
 
