@@ -1,6 +1,13 @@
 package io.sample.controller;
 
+import io.sample.bean.para.FilePara;
+import io.sample.service.SampleService;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -9,20 +16,25 @@ public class SampleController {
 //  private static final String template = "Hello, %s!";
 //  private final AtomicLong counter = new AtomicLong();
 
-  @RequestMapping("/")
-  public String index() {
-      return "index";
-  }
+	@Autowired
+    private SampleService sampleService;
 
-  @RequestMapping("/uploadFile")
-  public String uploadFile() {
-      return "index";
-  }
+	@RequestMapping("/")
+	public String index() {
+		return "index";
+	}
 
-//  @RequestMapping(value = {"/hello-world"}, method=RequestMethod.GET)
-//  public @ResponseBody Greeting sayHello(@RequestParam(value="name", 
-//  	required=false, defaultValue="Stranger") String name) {
-//      return new Greeting(counter.incrementAndGet(), String.format(template, name));
-//  }
+	@RequestMapping(value = {"/uploadFiles"})
+	public String handleUploadFiles(@Valid FilePara filePara, ModelMap model) throws Exception {
+
+		sampleService.convertExcel(filePara);
+
+		return "redirect:/uploadComplete";
+	}
+
+	@RequestMapping("/uploadComplete")
+	public String uploadComplete() {
+		return "uploadComplete";
+	}
 
 }
