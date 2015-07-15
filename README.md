@@ -10,3 +10,5 @@ Stop
 Ctrl + C
 
 $ gradle build -x test
+
+$ gradle bootRun

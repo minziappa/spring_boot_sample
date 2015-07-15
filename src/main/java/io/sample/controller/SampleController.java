@@ -27,7 +27,7 @@ public class SampleController {
 	@RequestMapping(value = {"/uploadFiles"})
 	public String handleUploadFiles(@Valid FilePara filePara, ModelMap model) throws Exception {
 
-		sampleService.convertExcel(filePara);
+		sampleService.readExcel(filePara);
 
 		return "redirect:/uploadComplete";
 	}
