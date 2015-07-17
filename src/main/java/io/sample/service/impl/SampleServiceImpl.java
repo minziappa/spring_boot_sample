@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,41 +51,73 @@ public class SampleServiceImpl implements SampleService{
         cell.setCellValue(cellvalue);
     }
 
+    private void setCellValue(Cell sourceCell, Cell destinationCell){
+
+        if(sourceCell != null) { 
+        	destinationCell.setCellStyle(sourceCell.getCellStyle());
+        }
+        // If there is a cell comment, copy
+        if (sourceCell != null && sourceCell.getCellComment() != null) {
+            destinationCell.setCellComment(sourceCell.getCellComment());
+        }
+        // If there is a cell Hyperlink, copy
+        if (sourceCell != null && sourceCell.getHyperlink() != null) {
+        	destinationCell.setHyperlink(sourceCell.getHyperlink());
+        }
+        if(sourceCell != null) {
+            switch (sourceCell.getCellType()) {
+                case Cell.CELL_TYPE_BLANK:
+                	destinationCell.setCellValue(sourceCell.getStringCellValue());
+                    break;
+                case Cell.CELL_TYPE_BOOLEAN:
+                	destinationCell.setCellValue(sourceCell.getBooleanCellValue());
+                    break;
+                case Cell.CELL_TYPE_ERROR:
+                	destinationCell.setCellErrorValue(sourceCell.getErrorCellValue());
+                    break;
+                case Cell.CELL_TYPE_FORMULA:
+                	destinationCell.setCellFormula(sourceCell.getCellFormula());
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+                	destinationCell.setCellValue(sourceCell.getNumericCellValue());
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                	destinationCell.setCellValue(sourceCell.getRichStringCellValue());
+                    break;
+                default:
+                	destinationCell.setCellValue(sourceCell.getStringCellValue());
+                    break;
+            }
+        }
+    }
+
 	@Override
 	public void readExcel(FilePara filePara) throws Exception {
 
-		logger.info("abcd 1 >>> " + filePara.getFile().getOriginalFilename());
 		InputStream is = filePara.getFile().getInputStream();
 		Workbook  wb = new XSSFWorkbook(is);
         Sheet sh = wb.getSheetAt(0);
 
         Iterator<Row> itr = sh.iterator();
 
-        int k=0;
         while(itr.hasNext()) {
         	Row row = itr.next();
+            Iterator<Cell> cells = row.cellIterator();
+            while(cells.hasNext()) {
+            	Cell cell = cells.next();
 
-            logger.info("abcd 2 >> " + sh.getLastRowNum() + " k=" + k);
-            //for(int i=0; i < sh.getLastRowNum(); i++) {
-                Iterator<Cell> cells = row.cellIterator();
-                while(cells.hasNext()) {
-                	Cell cell = cells.next();
-
-                	switch(cell.getCellType()) {
-                	case Cell.CELL_TYPE_BOOLEAN:
-                		System.out.print(cell.getBooleanCellValue() + "\t");
-                		break;
-                	case Cell.CELL_TYPE_NUMERIC:
-                		System.out.print(cell.getNumericCellValue() + "\t");
-                		break;
-                	case Cell.CELL_TYPE_STRING:
-                		System.out.print(cell.getStringCellValue() + "\t");
-                		break;
-                	}
-
-                }
-            //}
-
+            	switch(cell.getCellType()) {
+            	case Cell.CELL_TYPE_BOOLEAN:
+            		System.out.print(cell.getBooleanCellValue() + "\t");
+            		break;
+            	case Cell.CELL_TYPE_NUMERIC:
+            		System.out.print(cell.getNumericCellValue() + "\t");
+            		break;
+            	case Cell.CELL_TYPE_STRING:
+            		System.out.print(cell.getStringCellValue() + "\t");
+            		break;
+            	}
+            }
         }
 
         if(wb != null) {
@@ -192,6 +225,64 @@ public class SampleServiceImpl implements SampleService{
 		if(bfReader != null) {
 			bfReader.close();
 		}
+	}
+
+	public void copySheet(FilePara filePara) throws Exception {
+
+		InputStream is = filePara.getFile().getInputStream();
+		Workbook  wb = new XSSFWorkbook(is);
+        Sheet sourceSh = wb.getSheetAt(0);
+        Sheet destinationSh = wb.createSheet("copied");
+
+        for (int i=0; i < sourceSh.getPhysicalNumberOfRows(); i++) {
+
+        	Row sourceRow = sourceSh.getRow(i);
+            if(sourceRow==null) {
+            	sourceRow = sourceSh.createRow(i);
+            }
+            Row destinationRow = destinationSh.getRow(i);
+            if(destinationRow==null) {
+            	destinationRow = destinationSh.createRow(i);
+            }
+
+        	for (int k=0; k < sourceRow.getLastCellNum(); k++) {
+
+        		Cell sourceCell = sourceRow.getCell(k);
+	            Cell destinationCell = destinationRow.getCell(k);
+	            if(destinationCell==null) {
+	                destinationCell = destinationRow.createCell(k);
+	            }
+
+	            // Set cell values
+	            this.setCellValue(sourceCell, destinationCell);
+        	}
+            for (int n=0; n < sourceSh.getNumMergedRegions(); n++) {
+            	CellRangeAddress sourceCra = sourceSh.getMergedRegion(n);
+            	if(sourceCra.getFirstRow() == sourceRow.getRowNum()) {
+            		CellRangeAddress destinationCra = new CellRangeAddress(
+            			destinationRow.getRowNum(),
+            			destinationRow.getRowNum() + (sourceCra.getLastRow() - sourceCra.getFirstRow()),
+            			sourceCra.getFirstColumn(), sourceCra.getLastColumn());
+            		destinationSh.addMergedRegion(destinationCra);
+        	}
+
+        }
+
+    }
+
+        FileOutputStream os = new FileOutputStream("copied.xls");
+        wb.write(os);
+
+        if(wb != null) {
+        	wb.close();
+        }
+        if(is != null) {
+        	is.close();
+        }
+        if(os != null) {
+        	os.close();
+        }
+
 	}
 
 }
