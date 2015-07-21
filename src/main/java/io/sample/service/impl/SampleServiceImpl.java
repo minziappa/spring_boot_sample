@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -131,9 +130,10 @@ public class SampleServiceImpl implements SampleService{
 
 	public void writeExcel() throws Exception {
 
-        Workbook wb = new HSSFWorkbook();
+        // Workbook wb = new HSSFWorkbook();
+        Workbook  wb = new XSSFWorkbook();
         Sheet sh = wb.createSheet("sample Sheet");
-        for(int i=0;i<10;i++){
+        for(int i=0;i<10;i++) {
             setCellValue(sh, i, 0, "title1"+i);
             setCellValue(sh, i, 1, "title2"+i);
             setCellValue(sh, i, 2, "title3"+i);
@@ -246,16 +246,15 @@ public class SampleServiceImpl implements SampleService{
             }
 
         	for (int k=0; k < sourceRow.getLastCellNum(); k++) {
-
         		Cell sourceCell = sourceRow.getCell(k);
 	            Cell destinationCell = destinationRow.getCell(k);
 	            if(destinationCell==null) {
 	                destinationCell = destinationRow.createCell(k);
 	            }
-
 	            // Set cell values
 	            this.setCellValue(sourceCell, destinationCell);
         	}
+   
             for (int n=0; n < sourceSh.getNumMergedRegions(); n++) {
             	CellRangeAddress sourceCra = sourceSh.getMergedRegion(n);
             	if(sourceCra.getFirstRow() == sourceRow.getRowNum()) {
@@ -264,11 +263,9 @@ public class SampleServiceImpl implements SampleService{
             			destinationRow.getRowNum() + (sourceCra.getLastRow() - sourceCra.getFirstRow()),
             			sourceCra.getFirstColumn(), sourceCra.getLastColumn());
             		destinationSh.addMergedRegion(destinationCra);
-        	}
-
+            	}
+            }
         }
-
-    }
 
         FileOutputStream os = new FileOutputStream("copied.xls");
         wb.write(os);
