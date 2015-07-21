@@ -30,7 +30,7 @@ public class Application {
     }
     */
 
-    // 
+    // http://aaaa.com/lang=en
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
