@@ -29,12 +29,13 @@ public class SampleController {
 
 	@RequestMapping("/")
 	public String index() {
-		logger.info("message >> " + messages.getMessage("sample.parameter.error.message", null, LOCALE));		
+		logger.info("message >> " + messages.getMessage("sample.parameter.error.message", null, LOCALE));
 		return "index";
 	}
 
 	@RequestMapping(value = {"/uploadFiles"})
-	public String handleUploadFiles(@Valid FilePara filePara, ModelMap model) throws Exception {
+	public String uploadFiles(@Valid FilePara filePara, ModelMap model) throws Exception {
+		logger.info("-->>> uploadFiles <<<<----");
 		sampleService.readExcel(filePara);
 		return "redirect:/uploadComplete";
 	}
