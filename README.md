@@ -21,3 +21,8 @@ $ gradle bootRun
 
 #### Reference
 http://kielczewski.eu/2014/12/spring-boot-security-application/
+
+This is a sample in Freemaker.
+<#list objList as obj>
+<#if obj_has_next>,</#if>
+</#list>

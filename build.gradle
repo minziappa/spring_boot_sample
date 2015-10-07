@@ -55,6 +55,7 @@ dependencies {
 }
 
 // $ gradle wrapper
+// $ gradlew build
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.3'
 }
