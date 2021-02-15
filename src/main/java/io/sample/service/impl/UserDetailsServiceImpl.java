@@ -1,8 +1,5 @@
 package io.sample.service.impl;
 
-import io.sample.bean.ExtendUser;
-import io.sample.bean.model.UserModel;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,8 +8,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,13 +15,17 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import io.sample.bean.ExtendUser;
+import io.sample.bean.model.UserModel;
+import io.sample.configure.PasswordEncoding;
+
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
 	@Autowired
-	private Md5PasswordEncoder passwordEncoder;
+	private PasswordEncoding passwordEncoder;
 
 	@Override
 	// @Transaction(readOnly = true)
@@ -74,7 +73,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	        boolean credentialsNonExpired = true;
 	        boolean accountNonLocked = true;
 
-	        user = new ExtendUser(userModel.getUserName(), passwordEncoder.encodePassword("test", null), enabled, 
+	        user = new ExtendUser(userModel.getUserName(), passwordEncoder.encode("test"), enabled, 
 	        		accountNonExpired, credentialsNonExpired, accountNonLocked, authorities, userModel);
 
 		} catch (Exception e) {

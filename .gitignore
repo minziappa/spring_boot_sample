@@ -2,3 +2,5 @@
 /bild
 /logs
 /build/
+/.gradle
+/.settings
