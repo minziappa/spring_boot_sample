@@ -1,18 +1,11 @@
-buildscript {
-    ext {
-        springBootVersion = '2.4.2'
-    }
-	repositories {
-		mavenCentral()
-		maven { url 'https://repo.spring.io/libs-snapshot' }
-	}
-    dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-    }
+plugins {
+  id 'java'
+  id "org.springframework.boot" version "2.4.2"
+  id "io.spring.dependency-management" version '1.0.10.RELEASE'
 }
-apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
+
+group 'io.boot.sample'
+version '0.0.1'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -36,7 +29,12 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+    jcenter()
+}
+
+ext {
+	springVersion = '2.4.3'
 }
 
 dependencies {
@@ -49,14 +47,14 @@ dependencies {
 	compile 'org.apache.poi:poi:3.12'
 	compile 'org.apache.poi:poi-ooxml:3.12'
 	compile 'org.apache.poi:poi-ooxml-schemas:3.12'
-    compile('org.springframework.boot:spring-boot-starter-web:2.4.2') {
-        exclude module: 'spring-boot-starter-tomcat:2.4.2'
+    compile('org.springframework.boot:spring-boot-starter-web:' + springVersion) {
+        exclude module: 'spring-boot-starter-tomcat:' + springVersion
     }
-	compile 'org.springframework.boot:spring-boot-starter-jetty:2.4.2'
-	compile 'org.springframework.boot:spring-boot-starter-security:2.4.2'
-	compile 'org.springframework.boot:spring-boot-starter-freemarker:2.4.2'
-	compile 'org.springframework.boot:spring-boot-autoconfigure:2.4.2'
-	compile 'org.springframework.boot:spring-boot-starter-aop:2.4.2'
+	compile 'org.springframework.boot:spring-boot-starter-jetty:' + springVersion
+	compile 'org.springframework.boot:spring-boot-starter-security:' + springVersion
+	compile 'org.springframework.boot:spring-boot-starter-freemarker:' + springVersion
+	compile 'org.springframework.boot:spring-boot-autoconfigure:' + springVersion
+	compile 'org.springframework.boot:spring-boot-starter-aop:' + springVersion
 	compile 'org.aspectj:aspectjrt:1.9.6'
 	testCompile 'org.springframework.boot:spring-boot-starter-test:2.4.2'
 	testCompile 'junit:junit:4.13.2'

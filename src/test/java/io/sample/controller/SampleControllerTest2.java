@@ -1,5 +1,7 @@
 package io.sample.controller;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +30,8 @@ public class SampleControllerTest2 {
 	private String propertyValue;
 
     @Test
-    public void contextLoads() {	
+    public void contextLoads() {
+    	assertEquals(true, true);
     }
 
 }

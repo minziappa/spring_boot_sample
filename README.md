@@ -6,7 +6,7 @@ Using
 ------------------
 #### Start
 $ gradle clean build  
-$ java -jar build/libs/myproject-0.0.1-SNAPSHOT.jar
+$ java -jar build/libs/sample-0.0.1-SNAPSHOT.jar
 
 #### Stop
 Ctrl + C
